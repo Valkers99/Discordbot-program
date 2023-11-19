@@ -1,7 +1,9 @@
 import json
+from random import randint
 import discord
 from decouple import config
 import requests
+from bs4 import BeautifulSoup
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -17,6 +19,24 @@ async def on_message(message):
     if message.author == client.user:
         return
     
+    if message.author.name == "gmcgwn" and not(message.content.startswith('t!')):
+        tenpercenter = randint(0,9)
+        if tenpercenter == 0:
+            page = randint(0,5)
+            post = randint(0,24)
+            response = requests.get(f"https://gelbooru.com/index.php?page=dapi&s=post&q=index&tags=foot_focus&limit=25&pid={page}")
+            unsouped_response = BeautifulSoup(response.content, features='xml')
+            await message.channel.send(str(unsouped_response.find_all('file_url')[post])[10:-11])
+
+    if message.author.name == "totallynotbob" and not(message.content.startswith('t!')):
+        tenpercenter = randint(0,9)
+        if tenpercenter == 0:
+            page = randint(0,5)
+            post = randint(0,24)
+            response = requests.get(f"https://gelbooru.com/index.php?page=dapi&s=post&q=index&tags=suit 1girl solo helltaker&limit=25&pid={page}")
+            unsouped_response = BeautifulSoup(response.content, features='xml')
+            await message.channel.send(str(unsouped_response.find_all('file_url')[post])[10:-11])
+
     if message.content.startswith('t!'):
         command = message.content[3:]
 
@@ -73,4 +93,4 @@ async def on_message(message):
 
     
 
-client.run(config('BOT_TOKEN'))
+client.run(config('BOT_TOKEN')) # type: ignore
