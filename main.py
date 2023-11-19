@@ -71,14 +71,33 @@ async def on_message(message):
 
     if message.content.startswith('t!'):
         command = message.content[3:]
-
         # HELLO COMMAND
         if command[:5] == "hello":
             await message.channel.send('Hello!')
+    
+        # FINDCARD MTG COMMAND
+        elif command[:11] == "findcardmtg":
+            response = requests.get(f"https://api.magicthegathering.io/v1/cards?name={command[12:]}")
+            if response.status_code == 400:
+                await message.channel.send("That card doesn't exist, sorry!")
+            else:
+                print(f"findcard command by {message.author}")
+                await message.channel.send('Here is your card!')
+                image_url = json.loads(response.content)['cards'][0]['imageUrl']
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(image_url) as resp:
+                        if resp.status != 200:
+                            return await message.channel.send('Could not download file...')
+                        data = io.BytesIO(await resp.read())
+                        await message.channel.send(file=discord.File(data, 'cool_image.png'))
+                await message.channel.send(f"Name: {json.loads(response.content)['cards'][0]['name']} \
+                                        \nCost: {json.loads(response.content)['cards'][0]['manaCost']} \
+                                        \nDescription: ```{json.loads(response.content)['cards'][0]['text']}``` \
+                                        \nType: {json.loads(response.content)['cards'][0]['type']}")
 
-        # FINDCARD COMMAND
-        elif command[:8] == "findcard":
-            response = requests.get(f"https://db.ygoprodeck.com/api/v7/cardinfo.php?name={command[9:]}")
+        # FINDCARD YUGIOH COMMAND
+        elif command[:14] == "findcardyugioh":
+            response = requests.get(f"https://db.ygoprodeck.com/api/v7/cardinfo.php?name={command[15:]}")
             if response.status_code == 400:
                 await message.channel.send("That card doesn't exist, sorry!")
             else:
