@@ -75,6 +75,7 @@ async def on_message(message):
         if command[:5] == "hello":
             await message.channel.send('Hello!')
     
+        # FINDCARD MTG COMMAND
         elif command[:11] == "findcardmtg":
             response = requests.get(f"https://api.magicthegathering.io/v1/cards?name={command[12:]}")
             if response.status_code == 400:
