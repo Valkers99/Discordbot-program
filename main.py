@@ -44,7 +44,6 @@ async def on_message(message):
             fiftyfifty = randint(0,1)
             await message.channel.send(f"Hey {message.author.name}  here is your video!")
             if fiftyfifty == 0:
-                
                 await message.channel.send("https://cdn.discordapp.com/attachments/921075396416536578/1177350723214786677/Hes_going_to_sacrifice_himself_.mp4")
             else:
                 await message.channel.send("https://cdn.discordapp.com/attachments/921075396416536578/1177350722505936916/y2mate.is_-_Not_me_not_Hermione_..._YOU-sinDVeBVjgw-720p-1700771385.mp4")
@@ -72,6 +71,22 @@ async def on_message(message):
             page = randint(0,5)
             post = randint(0,24)
             response = requests.get(f"https://gelbooru.com/index.php?page=dapi&s=post&q=index&tags=futa solo&limit=25&pid={page}")
+            unsouped_response = BeautifulSoup(response.content, features='xml')
+            image_url = str(unsouped_response.find_all('file_url')[post])[10:-11]
+            async with aiohttp.ClientSession() as session:
+                async with session.get(image_url) as resp:
+                    if resp.status != 200:
+                        return await message.channel.send('Could not download file...')
+                    data = io.BytesIO(await resp.read())
+                    await message.channel.send(f"Hey {message.author.name}  here is your image!")
+                    await message.channel.send(file=discord.File(data, 'SPOILER_cool_image.png'))
+    
+    if message.author.name == "ambreeney" and not(message.content.startswith('t!')):
+        tenpercenter = randint(0,9)
+        if tenpercenter == 0:
+            page = randint(0,5)
+            post = randint(0,24)
+            response = requests.get(f"https://gelbooru.com/index.php?page=dapi&s=post&q=index&tags=bulge solo serafuku&limit=25&pid={page}")
             unsouped_response = BeautifulSoup(response.content, features='xml')
             image_url = str(unsouped_response.find_all('file_url')[post])[10:-11]
             async with aiohttp.ClientSession() as session:
